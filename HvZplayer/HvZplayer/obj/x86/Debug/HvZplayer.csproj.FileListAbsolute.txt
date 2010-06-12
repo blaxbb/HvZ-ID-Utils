@@ -9,3 +9,16 @@ c:\users\brian barrett\documents\visual studio 2010\Projects\HvZplayer\HvZplayer
 c:\users\brian barrett\documents\visual studio 2010\Projects\HvZplayer\HvZplayer\obj\x86\Debug\HvZplayer.pdb
 c:\users\brian barrett\documents\visual studio 2010\Projects\HvZplayer\HvZplayer\bin\Debug\DataMatrix.net.dll
 c:\users\brian barrett\documents\visual studio 2010\Projects\HvZplayer\HvZplayer\bin\Debug\WebCam_Capture.dll
+C:\Users\Brian Barrett\Documents\Visual Studio 2010\Projects\HvZ\HvZ-ID-Utils\HvZplayer\HvZplayer\bin\Debug\HvZplayer.exe.config
+C:\Users\Brian Barrett\Documents\Visual Studio 2010\Projects\HvZ\HvZ-ID-Utils\HvZplayer\HvZplayer\bin\Debug\HvZplayer.exe
+C:\Users\Brian Barrett\Documents\Visual Studio 2010\Projects\HvZ\HvZ-ID-Utils\HvZplayer\HvZplayer\bin\Debug\HvZplayer.pdb
+C:\Users\Brian Barrett\Documents\Visual Studio 2010\Projects\HvZ\HvZ-ID-Utils\HvZplayer\HvZplayer\bin\Debug\AForge.Video.DirectShow.dll
+C:\Users\Brian Barrett\Documents\Visual Studio 2010\Projects\HvZ\HvZ-ID-Utils\HvZplayer\HvZplayer\bin\Debug\AForge.Video.dll
+C:\Users\Brian Barrett\Documents\Visual Studio 2010\Projects\HvZ\HvZ-ID-Utils\HvZplayer\HvZplayer\bin\Debug\zxing.dll
+C:\Users\Brian Barrett\Documents\Visual Studio 2010\Projects\HvZ\HvZ-ID-Utils\HvZplayer\HvZplayer\obj\x86\Debug\ResolveAssemblyReference.cache
+C:\Users\Brian Barrett\Documents\Visual Studio 2010\Projects\HvZ\HvZ-ID-Utils\HvZplayer\HvZplayer\obj\x86\Debug\HvZplayer.Form1.resources
+C:\Users\Brian Barrett\Documents\Visual Studio 2010\Projects\HvZ\HvZ-ID-Utils\HvZplayer\HvZplayer\obj\x86\Debug\HvZplayer.Properties.Resources.resources
+C:\Users\Brian Barrett\Documents\Visual Studio 2010\Projects\HvZ\HvZ-ID-Utils\HvZplayer\HvZplayer\obj\x86\Debug\GenerateResource.read.1.tlog
+C:\Users\Brian Barrett\Documents\Visual Studio 2010\Projects\HvZ\HvZ-ID-Utils\HvZplayer\HvZplayer\obj\x86\Debug\GenerateResource.write.1.tlog
+C:\Users\Brian Barrett\Documents\Visual Studio 2010\Projects\HvZ\HvZ-ID-Utils\HvZplayer\HvZplayer\obj\x86\Debug\HvZplayer.exe
+C:\Users\Brian Barrett\Documents\Visual Studio 2010\Projects\HvZ\HvZ-ID-Utils\HvZplayer\HvZplayer\obj\x86\Debug\HvZplayer.pdb

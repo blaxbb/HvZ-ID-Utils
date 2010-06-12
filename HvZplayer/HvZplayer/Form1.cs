@@ -8,49 +8,97 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 
-using DataMatrix.net;
-using WinFormCharpWebCam;
+using com.google.zxing;
+using com.google.zxing.common;
+using com.google.zxing.client;
+
+
+using AForge.Video;
+using AForge.Video.DirectShow;
 
 namespace HvZplayer
 {
     public partial class Form1 : Form
     {
-        WebCam webcam;
+        
         public Form1()
         {
             InitializeComponent();
 
             tabControl1.Dock = DockStyle.Fill;
-            label3.Text = "";
+            toolStripStatusLabel1.Text = "";
+            Application.ApplicationExit += new EventHandler(Application_ApplicationExit);
         }
+
+        void Application_ApplicationExit(object sender, EventArgs e)
+        {
+            if (pictureBox1.Image != null)
+            {
+                videoSource.Stop();
+            }
+        }
+
+        private FilterInfoCollection videoCaptureDevices;
+        private VideoCaptureDevice videoSource;
+
+
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            Console.WriteLine("GOOD");
-            webcam = new WebCam();
-            webcam.InitializeWebCam(ref pictureBox1);
-            webcam.Start();
+            
+            
+            videoCaptureDevices = new FilterInfoCollection(FilterCategory.VideoInputDevice);
+            
+            foreach (FilterInfo videoCaptureDevice in videoCaptureDevices)
+            {
+                comboBox1.Items.Add(videoCaptureDevice.Name);
+            }
+            comboBox1.SelectedIndex = 0;
+             
+
         }
 
         private void button1_Click(object sender, EventArgs e)
         {
-            Bitmap blankID = new Bitmap("images/hvzid02.jpg");
+            
+            String encoding = textBox_Name.Text + "|" + textBox_Kill.Text;
 
-            DmtxImageEncoder encoder = new DmtxImageEncoder();
-            DmtxImageEncoderOptions options = new DmtxImageEncoderOptions();
-            options.ModuleSize = 8;
-            options.MarginSize = 4;
-            options.BackColor = Color.White;
-            options.ForeColor = Color.Black;
+            com.google.zxing.qrcode.QRCodeWriter qrCode = new com.google.zxing.qrcode.QRCodeWriter();
+            com.google.zxing.common.ByteMatrix byteIMG = qrCode.encode(encoding, com.google.zxing.BarcodeFormat.QR_CODE, 200, 200);
 
-            Bitmap codeBitmap = encoder.EncodeImage(textBox1.Text + "|" + textBox2.Text);
+            sbyte[][] img = byteIMG.Array;
 
+            Bitmap qrCodeBmp = new Bitmap(200, 200);
+            Graphics g = Graphics.FromImage(qrCodeBmp);
+
+            g.Clear(Color.White);
+
+            for (int i = 0; i <= img.Length - 1; i++)
+            {
+                for (int j = 0; j <= img[i].Length - 1; j++)
+                {
+                    if (img[i][j] == 0)
+                    {
+                        g.FillRectangle(Brushes.Black, j, i, 1, 1);
+                    }
+                    else
+                    {
+                        g.FillRectangle(Brushes.White, j, i, 1, 1);
+                    }
+                }
+            }
+
+
+            Bitmap blankID = new Bitmap("hvzid02.jpg");
             Bitmap genID = new Bitmap(234, 126);
+
             Graphics build = Graphics.FromImage(genID);
             build.DrawImage(blankID, 0, 0);
-            build.DrawImage(scaleByPercent(codeBitmap, 50), 85, 4);
-            build.DrawString(textBox1.Text, new Font("Arial", 12), new SolidBrush(Color.Black), 6, 73);
-            build.DrawString(textBox2.Text, new Font("Arial", 12), new SolidBrush(Color.Black), 6, 88);
+            build.DrawImage(scaleByPercent(qrCodeBmp, 50), 75, -12);
+            build.DrawString(textBox_Name.Text, new Font("Arial", 12), new SolidBrush(System.Drawing.Color.Black), 6, 80);
+            build.DrawString(textBox_Kill.Text, new Font("Arial", 12), new SolidBrush(System.Drawing.Color.Black), 6, 95);
+
+            toolStripStatusLabel1.Text = "Encoded";
 
             saveFileDialog1.Filter = "jpeg files (*.jpeg)|*.jpeg";
 
@@ -59,13 +107,73 @@ namespace HvZplayer
             {
 
                 genID.Save(saveFileDialog1.FileName,ImageFormat.Jpeg);
-                label3.Text = "ID successfully generated";
+
+                toolStripStatusLabel1.Text = "ID saved";
             }
-
-
-            //genID.Save("newID.jpg");
         }
 
+
+
+        
+        private void button2_Click(object sender, EventArgs e)
+        {
+            
+            Bitmap capturedBmp = (Bitmap)pictureBox1.Image;
+
+            RGBLuminanceSource source = new RGBLuminanceSource(capturedBmp, capturedBmp.Width, capturedBmp.Height);
+
+            BinaryBitmap binDecode = new BinaryBitmap(new HybridBinarizer(source));
+
+            Reader reader = new MultiFormatReader();
+
+            String decodedString = "";
+            Result result;
+            try
+            {
+                result = (Result) reader.decode(binDecode);
+                decodedString = result.Text;
+            }
+            catch (ReaderException)
+            {
+                return;
+            }
+
+ 
+
+
+            if (decodedString == "")
+            {
+                label_Name.Text = ("Name: " + "error");
+                label_Kill.Text = ("Kill ID: " + "error");
+                toolStripStatusLabel1.Text = "Code not found";
+            }
+            else
+            {
+                
+                String[] items = (decodedString).Split('|');
+
+                label_Name.Text = "Name: " + items[0];
+                label_Kill.Text = "Kill ID: " + items[1];
+
+                toolStripStatusLabel1.Text = "Decoded";
+            }
+
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            videoSource = new VideoCaptureDevice(videoCaptureDevices[comboBox1.SelectedIndex].MonikerString);
+
+            videoSource.NewFrame += new NewFrameEventHandler(videoSource_NewFrame);
+
+            videoSource.Start();
+        }
+
+        void videoSource_NewFrame(object sender, NewFrameEventArgs eventArgs)
+        {
+            Bitmap image = (Bitmap) eventArgs.Frame.Clone();
+            pictureBox1.Image = image;
+        }
 
         static Image scaleByPercent(Image imgPhoto, int Percent)
         {
@@ -95,36 +203,6 @@ namespace HvZplayer
 
             grPhoto.Dispose();
             return bmPhoto;
-        }
-
-        private void button2_Click(object sender, EventArgs e)
-        {
-            Image captured = pictureBox1.Image;
-
-            DmtxImageDecoder decoder = new DmtxImageDecoder();
-            List<string> codes = decoder.DecodeImage((Bitmap)captured, 1, new TimeSpan(0, 0, 3));
-            StringBuilder builder = new StringBuilder();
-            foreach (string code in codes)
-            {
-                builder.Append(code);
-            }
-            
-            string result = builder.ToString();
-            if (result == "")
-            {
-                label4.Text = ("Name: " + "error");
-                label5.Text = ("Kill ID: " + "error");
-            }
-            else
-            {
-                //result = "Brian|ABDKJV";
-                String[] items = result.Split('|');
-
-                label4.Text = label4.Text + items[0];
-                label5.Text = label5.Text + items[1];
-                
-            }
-
         }
     }
 }
