@@ -40,7 +40,6 @@
             this.label_Kill = new System.Windows.Forms.Label();
             this.label_Name = new System.Windows.Forms.Label();
             this.button3 = new System.Windows.Forms.Button();
-            this.button_Capture = new System.Windows.Forms.Button();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
@@ -60,7 +59,7 @@
             this.tabControl1.Location = new System.Drawing.Point(0, 0);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(292, 212);
+            this.tabControl1.Size = new System.Drawing.Size(292, 213);
             this.tabControl1.TabIndex = 0;
             // 
             // tabPage1
@@ -73,7 +72,7 @@
             this.tabPage1.Location = new System.Drawing.Point(4, 22);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(284, 186);
+            this.tabPage1.Size = new System.Drawing.Size(284, 187);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "Generate ID";
             this.tabPage1.UseVisualStyleBackColor = true;
@@ -127,12 +126,11 @@
             this.tabPage2.Controls.Add(this.label_Kill);
             this.tabPage2.Controls.Add(this.label_Name);
             this.tabPage2.Controls.Add(this.button3);
-            this.tabPage2.Controls.Add(this.button_Capture);
             this.tabPage2.Controls.Add(this.pictureBox1);
             this.tabPage2.Location = new System.Drawing.Point(4, 22);
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(284, 186);
+            this.tabPage2.Size = new System.Drawing.Size(284, 187);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "Scan ID";
             this.tabPage2.UseVisualStyleBackColor = true;
@@ -148,7 +146,7 @@
             // label_Kill
             // 
             this.label_Kill.AutoSize = true;
-            this.label_Kill.Location = new System.Drawing.Point(125, 85);
+            this.label_Kill.Location = new System.Drawing.Point(164, 29);
             this.label_Kill.Name = "label_Kill";
             this.label_Kill.Size = new System.Drawing.Size(37, 13);
             this.label_Kill.TabIndex = 2;
@@ -157,7 +155,7 @@
             // label_Name
             // 
             this.label_Name.AutoSize = true;
-            this.label_Name.Location = new System.Drawing.Point(125, 62);
+            this.label_Name.Location = new System.Drawing.Point(164, 6);
             this.label_Name.Name = "label_Name";
             this.label_Name.Size = new System.Drawing.Size(38, 13);
             this.label_Name.TabIndex = 2;
@@ -173,21 +171,11 @@
             this.button3.UseVisualStyleBackColor = true;
             this.button3.Click += new System.EventHandler(this.button3_Click);
             // 
-            // button_Capture
-            // 
-            this.button_Capture.Location = new System.Drawing.Point(128, 6);
-            this.button_Capture.Name = "button_Capture";
-            this.button_Capture.Size = new System.Drawing.Size(75, 23);
-            this.button_Capture.TabIndex = 1;
-            this.button_Capture.Text = "Capture";
-            this.button_Capture.UseVisualStyleBackColor = true;
-            this.button_Capture.Click += new System.EventHandler(this.button2_Click);
-            // 
             // pictureBox1
             // 
             this.pictureBox1.Location = new System.Drawing.Point(6, 6);
             this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(116, 92);
+            this.pictureBox1.Size = new System.Drawing.Size(152, 92);
             this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.pictureBox1.TabIndex = 0;
             this.pictureBox1.TabStop = false;
@@ -196,9 +184,9 @@
             // 
             this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripStatusLabel1});
-            this.statusStrip1.Location = new System.Drawing.Point(292, 190);
+            this.statusStrip1.Location = new System.Drawing.Point(292, 191);
             this.statusStrip1.Name = "statusStrip1";
-            this.statusStrip1.Size = new System.Drawing.Size(0, 22);
+            this.statusStrip1.Size = new System.Drawing.Size(31, 22);
             this.statusStrip1.TabIndex = 1;
             this.statusStrip1.Text = "statusStrip1";
             // 
@@ -212,7 +200,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(291, 212);
+            this.ClientSize = new System.Drawing.Size(323, 213);
             this.Controls.Add(this.statusStrip1);
             this.Controls.Add(this.tabControl1);
             this.Name = "Form1";
@@ -244,7 +232,6 @@
         private System.Windows.Forms.SaveFileDialog saveFileDialog1;
         private System.Windows.Forms.Label label_Kill;
         private System.Windows.Forms.Label label_Name;
-        private System.Windows.Forms.Button button_Capture;
         private System.Windows.Forms.PictureBox pictureBox1;
         private System.Windows.Forms.ComboBox comboBox1;
         private System.Windows.Forms.Button button3;

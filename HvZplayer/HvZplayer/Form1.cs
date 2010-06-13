@@ -7,10 +7,12 @@ using System.Drawing.Imaging;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+using System.Threading;
 
 using com.google.zxing;
 using com.google.zxing.common;
 using com.google.zxing.client;
+using com.google.zxing.qrcode;
 
 
 using AForge.Video;
@@ -24,10 +26,47 @@ namespace HvZplayer
         public Form1()
         {
             InitializeComponent();
+        }
 
-            tabControl1.Dock = DockStyle.Fill;
-            toolStripStatusLabel1.Text = "";
-            Application.ApplicationExit += new EventHandler(Application_ApplicationExit);
+
+        void decoder_DoWork(object sender, DoWorkEventArgs e)
+        {
+            Bitmap bmp = (Bitmap)e.Argument;
+            QRCodeReader reader = new QRCodeReader();
+            RGBLuminanceSource source = new RGBLuminanceSource(bmp, bmp.Width, bmp.Height);
+
+            BinaryBitmap binDecode = new BinaryBitmap(new HybridBinarizer(source));
+
+            String decodedString = "";
+            Result result;
+            try
+            {
+                result = (Result)reader.decode(binDecode);
+                decodedString = result.Text;
+            }
+            catch (ReaderException)
+            {
+                decodedString = "";
+            }
+
+            if (decodedString == "")
+            {
+                toolStripStatusLabel1.Text = "Scan a Player ID";
+            }
+            else
+            {
+                String[] items = (decodedString).Split('|');
+
+                this.Invoke((MethodInvoker)delegate//run on UI thread
+                {
+                    label_Name.Text = "Name: " + items[0];
+                    label_Kill.Text = "Kill ID: " + items[1];
+                    toolStripStatusLabel1.Text = "Decoded";
+                });
+            }
+            
+            
+            
         }
 
         void Application_ApplicationExit(object sender, EventArgs e)
@@ -41,11 +80,18 @@ namespace HvZplayer
         private FilterInfoCollection videoCaptureDevices;
         private VideoCaptureDevice videoSource;
 
+       
+        static BackgroundWorker decoder = new BackgroundWorker();
+        
 
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            
+            decoder.DoWork += new DoWorkEventHandler(decoder_DoWork);
+
+            tabControl1.Dock = DockStyle.Fill;
+            toolStripStatusLabel1.Text = "";
+            Application.ApplicationExit += new EventHandler(Application_ApplicationExit);
             
             videoCaptureDevices = new FilterInfoCollection(FilterCategory.VideoInputDevice);
             
@@ -115,50 +161,6 @@ namespace HvZplayer
 
 
         
-        private void button2_Click(object sender, EventArgs e)
-        {
-            
-            Bitmap capturedBmp = (Bitmap)pictureBox1.Image;
-
-            RGBLuminanceSource source = new RGBLuminanceSource(capturedBmp, capturedBmp.Width, capturedBmp.Height);
-
-            BinaryBitmap binDecode = new BinaryBitmap(new HybridBinarizer(source));
-
-            Reader reader = new MultiFormatReader();
-
-            String decodedString = "";
-            Result result;
-            try
-            {
-                result = (Result) reader.decode(binDecode);
-                decodedString = result.Text;
-            }
-            catch (ReaderException)
-            {
-                return;
-            }
-
- 
-
-
-            if (decodedString == "")
-            {
-                label_Name.Text = ("Name: " + "error");
-                label_Kill.Text = ("Kill ID: " + "error");
-                toolStripStatusLabel1.Text = "Code not found";
-            }
-            else
-            {
-                
-                String[] items = (decodedString).Split('|');
-
-                label_Name.Text = "Name: " + items[0];
-                label_Kill.Text = "Kill ID: " + items[1];
-
-                toolStripStatusLabel1.Text = "Decoded";
-            }
-
-        }
 
         private void button3_Click(object sender, EventArgs e)
         {
@@ -169,10 +171,15 @@ namespace HvZplayer
             videoSource.Start();
         }
 
+ 
         void videoSource_NewFrame(object sender, NewFrameEventArgs eventArgs)
         {
-            Bitmap image = (Bitmap) eventArgs.Frame.Clone();
-            pictureBox1.Image = image;
+
+            
+            pictureBox1.Image = (Bitmap)eventArgs.Frame.Clone();
+            
+            decoder.RunWorkerAsync((Bitmap) eventArgs.Frame.Clone());
+
         }
 
         static Image scaleByPercent(Image imgPhoto, int Percent)
