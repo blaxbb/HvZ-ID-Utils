@@ -140,11 +140,13 @@ namespace HvZplayer
 
             Graphics build = Graphics.FromImage(genID);
             build.DrawImage(blankID, 0, 0);
+            
+
+
+            build.DrawString(textBox_Name.Text, new Font("Arial", 10), new SolidBrush(System.Drawing.Color.Black), 6, 80);
+            build.DrawString(textBox_Kill.Text, new Font("Arial", 10), new SolidBrush(System.Drawing.Color.Black), 6, 95);
+
             build.DrawImage(scaleByPercent(qrCodeBmp, 75), 95, -12);
-
-
-            build.DrawString(cutoffString(textBox_Name.Text,14), new Font("Arial", 10), new SolidBrush(System.Drawing.Color.Black), 6, 80);
-            build.DrawString(cutoffString(textBox_Kill.Text,14), new Font("Arial", 10), new SolidBrush(System.Drawing.Color.Black), 6, 95);
 
             toolStripStatusLabel1.Text = "Encoded";
 
@@ -184,15 +186,6 @@ namespace HvZplayer
             
             decoder.RunWorkerAsync((Bitmap) eventArgs.Frame.Clone());
 
-        }
-
-        static String cutoffString(string source, int length)
-        {
-            StringBuilder sb = new StringBuilder();
-
-            sb.Append(source);
-            sb.Length = length;
-            return sb.ToString();
         }
 
         static Image scaleByPercent(Image imgPhoto, int Percent)
