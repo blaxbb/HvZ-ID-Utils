@@ -140,11 +140,13 @@ namespace HvZplayer
 
             Graphics build = Graphics.FromImage(genID);
             build.DrawImage(blankID, 0, 0);
-            build.DrawImage(scaleByPercent(qrCodeBmp, 50), 75, -12);
+            build.DrawImage(scaleByPercent(qrCodeBmp, 75), 95, -12);
             build.DrawString(textBox_Name.Text, new Font("Arial", 12), new SolidBrush(System.Drawing.Color.Black), 6, 80);
             build.DrawString(textBox_Kill.Text, new Font("Arial", 12), new SolidBrush(System.Drawing.Color.Black), 6, 95);
 
             toolStripStatusLabel1.Text = "Encoded";
+
+            pictureBox_ID.Image = genID;
 
             saveFileDialog1.Filter = "jpeg files (*.jpeg)|*.jpeg";
 
@@ -152,7 +154,7 @@ namespace HvZplayer
                 && saveFileDialog1.FileName.Length > 0)
             {
 
-                genID.Save(saveFileDialog1.FileName,ImageFormat.Jpeg);
+                genID.Save(saveFileDialog1.FileName, ImageFormat.Jpeg);
 
                 toolStripStatusLabel1.Text = "ID saved";
             }

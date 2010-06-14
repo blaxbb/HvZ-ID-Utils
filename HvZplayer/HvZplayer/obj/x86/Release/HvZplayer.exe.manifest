@@ -66,14 +66,14 @@
     </dependentAssembly>
   </dependency>
   <dependency>
-    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="HvZplayer.exe" size="15360">
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="HvZplayer.exe" size="15872">
       <assemblyIdentity name="HvZplayer" version="1.0.0.0" language="neutral" processorArchitecture="x86" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-        <dsig:DigestValue>H2O037UJEYI/Ve6lcCgiEG/AoTA=</dsig:DigestValue>
+        <dsig:DigestValue>P7Na7bDJQDPD1iJXXn/kHOSY9dA=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>

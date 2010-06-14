@@ -44,11 +44,13 @@
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
+            this.pictureBox_ID = new System.Windows.Forms.PictureBox();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.tabPage2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.statusStrip1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox_ID)).BeginInit();
             this.SuspendLayout();
             // 
             // tabControl1
@@ -64,6 +66,7 @@
             // 
             // tabPage1
             // 
+            this.tabPage1.Controls.Add(this.pictureBox_ID);
             this.tabPage1.Controls.Add(this.button_Generate);
             this.tabPage1.Controls.Add(this.textBox_Kill);
             this.tabPage1.Controls.Add(this.textBox_Name);
@@ -80,7 +83,7 @@
             // button_Generate
             // 
             this.button_Generate.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.button_Generate.Location = new System.Drawing.Point(200, 135);
+            this.button_Generate.Location = new System.Drawing.Point(203, 139);
             this.button_Generate.Name = "button_Generate";
             this.button_Generate.Size = new System.Drawing.Size(75, 23);
             this.button_Generate.TabIndex = 3;
@@ -196,6 +199,17 @@
             this.toolStripStatusLabel1.Size = new System.Drawing.Size(118, 15);
             this.toolStripStatusLabel1.Text = "toolStripStatusLabel1";
             // 
+            // pictureBox_ID
+            // 
+            this.pictureBox_ID.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.pictureBox_ID.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.pictureBox_ID.Location = new System.Drawing.Point(13, 59);
+            this.pictureBox_ID.Name = "pictureBox_ID";
+            this.pictureBox_ID.Size = new System.Drawing.Size(176, 103);
+            this.pictureBox_ID.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.pictureBox_ID.TabIndex = 4;
+            this.pictureBox_ID.TabStop = false;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -214,6 +228,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.statusStrip1.ResumeLayout(false);
             this.statusStrip1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox_ID)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -237,6 +252,7 @@
         private System.Windows.Forms.Button button3;
         private System.Windows.Forms.StatusStrip statusStrip1;
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel1;
+        private System.Windows.Forms.PictureBox pictureBox_ID;
 
     }
 }
