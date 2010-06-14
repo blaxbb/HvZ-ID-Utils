@@ -30,6 +30,7 @@
         {
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.pictureBox_ID = new System.Windows.Forms.PictureBox();
             this.button_Generate = new System.Windows.Forms.Button();
             this.textBox_Kill = new System.Windows.Forms.TextBox();
             this.textBox_Name = new System.Windows.Forms.TextBox();
@@ -44,13 +45,12 @@
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
-            this.pictureBox_ID = new System.Windows.Forms.PictureBox();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox_ID)).BeginInit();
             this.tabPage2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.statusStrip1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox_ID)).BeginInit();
             this.SuspendLayout();
             // 
             // tabControl1
@@ -63,6 +63,7 @@
             this.tabControl1.SelectedIndex = 0;
             this.tabControl1.Size = new System.Drawing.Size(292, 213);
             this.tabControl1.TabIndex = 0;
+            this.tabControl1.SelectedIndexChanged += new System.EventHandler(this.tabChange);
             // 
             // tabPage1
             // 
@@ -79,6 +80,17 @@
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "Generate ID";
             this.tabPage1.UseVisualStyleBackColor = true;
+            // 
+            // pictureBox_ID
+            // 
+            this.pictureBox_ID.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.pictureBox_ID.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.pictureBox_ID.Location = new System.Drawing.Point(13, 59);
+            this.pictureBox_ID.Name = "pictureBox_ID";
+            this.pictureBox_ID.Size = new System.Drawing.Size(176, 103);
+            this.pictureBox_ID.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.pictureBox_ID.TabIndex = 4;
+            this.pictureBox_ID.TabStop = false;
             // 
             // button_Generate
             // 
@@ -199,17 +211,6 @@
             this.toolStripStatusLabel1.Size = new System.Drawing.Size(118, 15);
             this.toolStripStatusLabel1.Text = "toolStripStatusLabel1";
             // 
-            // pictureBox_ID
-            // 
-            this.pictureBox_ID.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.pictureBox_ID.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.pictureBox_ID.Location = new System.Drawing.Point(13, 59);
-            this.pictureBox_ID.Name = "pictureBox_ID";
-            this.pictureBox_ID.Size = new System.Drawing.Size(176, 103);
-            this.pictureBox_ID.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
-            this.pictureBox_ID.TabIndex = 4;
-            this.pictureBox_ID.TabStop = false;
-            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -223,12 +224,12 @@
             this.tabControl1.ResumeLayout(false);
             this.tabPage1.ResumeLayout(false);
             this.tabPage1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox_ID)).EndInit();
             this.tabPage2.ResumeLayout(false);
             this.tabPage2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.statusStrip1.ResumeLayout(false);
             this.statusStrip1.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox_ID)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 

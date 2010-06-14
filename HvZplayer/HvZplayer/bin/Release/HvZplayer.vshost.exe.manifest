@@ -38,7 +38,12 @@
   </dependency>
   <dependency>
     <dependentAssembly dependencyType="preRequisite" allowDelayedBinding="true">
-      <assemblyIdentity name="Microsoft.Windows.CommonLanguageRuntime" version="4.0.30319.0" />
+      <assemblyIdentity name="Microsoft.Windows.CommonLanguageRuntime" version="2.0.50727.0" />
+    </dependentAssembly>
+  </dependency>
+  <dependency>
+    <dependentAssembly dependencyType="preRequisite" allowDelayedBinding="true">
+      <assemblyIdentity name="WindowsBase" version="3.0.0.0" publicKeyToken="31bf3856ad364e35" language="neutral" processorArchitecture="msil" />
     </dependentAssembly>
   </dependency>
   <dependency>
@@ -73,7 +78,7 @@
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-        <dsig:DigestValue>P7Na7bDJQDPD1iJXXn/kHOSY9dA=</dsig:DigestValue>
+        <dsig:DigestValue>LBG/laqJMhjxVXc3XxBYdZO9I3Q=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
@@ -89,13 +94,13 @@
       </hash>
     </dependentAssembly>
   </dependency>
-  <file name="HvZplayer.exe.config" size="144">
+  <file name="HvZplayer.exe.config" size="117">
     <hash>
       <dsig:Transforms>
         <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
       </dsig:Transforms>
       <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-      <dsig:DigestValue>cpzNzlRjZspwKGLNlX6RAlU3880=</dsig:DigestValue>
+      <dsig:DigestValue>a3Forh+i+nzyaONrpGeK7Sudu10=</dsig:DigestValue>
     </hash>
   </file>
 </asmv1:assembly>

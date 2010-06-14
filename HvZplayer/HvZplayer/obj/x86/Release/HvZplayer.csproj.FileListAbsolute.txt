@@ -9,8 +9,8 @@ C:\Users\Brian Barrett\Documents\Visual Studio 2010\Projects\HvZ\HvZ-ID-Utils\Hv
 C:\Users\Brian Barrett\Documents\Visual Studio 2010\Projects\HvZ\HvZ-ID-Utils\HvZplayer\HvZplayer\obj\x86\Release\ResolveAssemblyReference.cache
 C:\Users\Brian Barrett\Documents\Visual Studio 2010\Projects\HvZ\HvZ-ID-Utils\HvZplayer\HvZplayer\obj\x86\Release\HvZplayer.Form1.resources
 C:\Users\Brian Barrett\Documents\Visual Studio 2010\Projects\HvZ\HvZ-ID-Utils\HvZplayer\HvZplayer\obj\x86\Release\HvZplayer.Properties.Resources.resources
-C:\Users\Brian Barrett\Documents\Visual Studio 2010\Projects\HvZ\HvZ-ID-Utils\HvZplayer\HvZplayer\obj\x86\Release\GenerateResource.read.1.tlog
-C:\Users\Brian Barrett\Documents\Visual Studio 2010\Projects\HvZ\HvZ-ID-Utils\HvZplayer\HvZplayer\obj\x86\Release\GenerateResource.write.1.tlog
+C:\Users\Brian Barrett\Documents\Visual Studio 2010\Projects\HvZ\HvZ-ID-Utils\HvZplayer\HvZplayer\obj\x86\Release\ResGen.read.1.tlog
+C:\Users\Brian Barrett\Documents\Visual Studio 2010\Projects\HvZ\HvZ-ID-Utils\HvZplayer\HvZplayer\obj\x86\Release\ResGen.write.1.tlog
 C:\Users\Brian Barrett\Documents\Visual Studio 2010\Projects\HvZ\HvZ-ID-Utils\HvZplayer\HvZplayer\obj\x86\Release\HvZplayer.exe.manifest
 C:\Users\Brian Barrett\Documents\Visual Studio 2010\Projects\HvZ\HvZ-ID-Utils\HvZplayer\HvZplayer\obj\x86\Release\HvZplayer.application
 C:\Users\Brian Barrett\Documents\Visual Studio 2010\Projects\HvZ\HvZ-ID-Utils\HvZplayer\HvZplayer\obj\x86\Release\HvZplayer.exe
