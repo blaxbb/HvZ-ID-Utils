@@ -15,6 +15,7 @@ using System.Drawing.Imaging;
 using HtmlAgilityPack;
 using System.Reflection;
 using System.IO;
+using com.google.zxing.common;
 
 
 namespace HvZmod
@@ -24,7 +25,29 @@ namespace HvZmod
         string htmlLocation = "";
         string imageSaveLocation = "";
 
+        private FilterInfoCollection videoCaptureDevices;
+        private VideoCaptureDevice videoSource;
+
+        static BackgroundWorker decoder = new BackgroundWorker();
+
         List<player> players = new List<player>();
+        List<player> absent = new List<player>();
+        List<player> present = new List<player>();
+        List<player> arbit= new List<player>();
+
+        int debugI= 1;
+
+        public class player
+        {
+            public string name;
+            public string killid;
+
+            public player(string name, string killid)
+            {
+                this.name = name;
+                this.killid = killid;
+            }
+        }
 
         public Form1()
         {
@@ -33,12 +56,87 @@ namespace HvZmod
 
         private void Form1_Load(object sender, EventArgs e)
         {
+            Application.ApplicationExit += new EventHandler(Application_ApplicationExit);
+            decoder.DoWork += new DoWorkEventHandler(decoder_DoWork);
+
             if (File.Exists("players.csv"))
             {
                 putCSV(new StreamReader("players.csv"));
                 enableControls();
 
             }
+
+            videoCaptureDevices = new FilterInfoCollection(FilterCategory.VideoInputDevice);
+
+            foreach (FilterInfo videoCaptureDevice in videoCaptureDevices)
+            {
+                comboBox_videoSource.Items.Add(videoCaptureDevice.Name);
+                
+            }
+            comboBox_videoSource.SelectedIndex = 0;
+
+            toolStripStatusLabel1.Text = "";
+        }
+
+        void decoder_DoWork(object sender, DoWorkEventArgs e)
+        {
+            Bitmap bmp = (Bitmap)e.Argument;
+            
+            QRCodeReader reader = new QRCodeReader();
+            RGBLuminanceSource source = new RGBLuminanceSource(bmp, bmp.Width, bmp.Height);
+
+            BinaryBitmap binDecode = new BinaryBitmap(new HybridBinarizer(source));
+
+            String decodedString = "";
+            Result result;
+
+            try
+            {
+                result = (Result)reader.decode(binDecode);
+                decodedString = result.Text;
+            }
+
+            catch (ReaderException)
+            {
+                decodedString = "";
+            }
+
+            if (decodedString == "")
+            {
+
+            }
+
+            else
+            {
+                String[] items = (decodedString).Split('|');
+
+                this.Invoke((MethodInvoker)delegate//run on UI thread
+                {
+                    if (tabControl1.SelectedIndex == 2)
+                    {
+                        playerPresent(items[0], items[1]);
+                    }
+                    if (tabControl1.SelectedIndex == 3)
+                    {
+                        
+                        label_Name_List.Text = "Name: " + items[0];
+                        label_Kill_List.Text = "Kill ID: " + items[1];
+                    }
+                });
+            }
+        }
+
+        void Application_ApplicationExit(object sender, EventArgs e)
+        {
+
+            try
+            {
+                if (videoSource.IsRunning)
+                {
+                    videoSource.Stop();
+                }
+            }
+            catch (Exception) { }
         }
 
         private void enableControls()
@@ -47,22 +145,10 @@ namespace HvZmod
             
         }
 
-        public class player
-        {
-            public string name;
-            public string killid;
-            public string email;
-
-            public player(string name, string killid, string email)
-            {
-                this.name = name;
-                this.killid = killid;
-                this.email = email;
-            }
-        }
-
         private void button_list_Click(object sender, EventArgs e)
         {
+            players.RemoveRange(0, players.Count);
+
             if (openFileDialog1.ShowDialog() == System.Windows.Forms.DialogResult.OK
                 && openFileDialog1.FileName.Length > 0)
             {
@@ -85,11 +171,17 @@ namespace HvZmod
                         try
                         {
                             string[] splitParse = (parse.ToString()).Split('|');
-                            players.Add(new player(splitParse[0], splitParse[1],splitParse[2]));                         
+
+                            //[4] = "<a href='admin/edit_player.php?id=GWKPIL'>edit</a>"
+
+                            string ID = splitParse[4].ToString().Remove(0, 34);
+                            
+
+                            //string[] idURL = splitParse[4].ToString().Split('=');
+                            players.Add(new player(splitParse[0], ID.Remove(6, 10)));                         
                         }
                         catch (Exception excep)
                         {
-                            MessageBox.Show(excep.Message);
                             break;
                         }
 
@@ -99,16 +191,35 @@ namespace HvZmod
                     
                 }
 
-                StreamWriter sw = new StreamWriter("players.csv");
-                sw.WriteLine("Name,KillID,Email");
-                players.ForEach(delegate(player p)
-                {
-                    sw.WriteLine(p.name + "," + p.killid + "," + p.email);
-                });
-                sw.Close();
-                label_list.Text = htmlLocation;
+                absent = players;
 
-                button_outLocation.Enabled = true;
+                absent.ForEach(delegate(player p)
+                {
+                    ListViewItem item = new ListViewItem(p.name);
+                    item.SubItems.Add(p.killid);
+                    listView_Attend_Absent.Items.Add(item);
+                });
+
+
+                try
+                {
+                    StreamWriter sw = new StreamWriter("players.csv");
+                    sw.WriteLine("Name,KillID");
+                    players.ForEach(delegate(player p)
+                    {
+                        sw.WriteLine(p.name + "," + p.killid);
+                        Console.WriteLine(p.name + "," + p.killid);
+                    });
+                    sw.Close();
+                    label_list.Text = htmlLocation;
+
+                    button_outLocation.Enabled = true;
+                }
+                catch (Exception excep)
+                {
+                    MessageBox.Show(excep.Message);
+                }
+
             }
         }
 
@@ -128,37 +239,21 @@ namespace HvZmod
         {
             toolStripStatusLabel1.Text = "Processing";
 
+            int i = 1;
             players.ForEach(delegate(player p)
             {
-                generateID(p.name, p.killid).Save(imageSaveLocation + @"\" + p.name + "_ID.jpeg", ImageFormat.Jpeg);
-                Console.WriteLine("Generated " + p.name + "'s ID");
+                Image gen = generateID(p.name, p.killid);
+                if (File.Exists(imageSaveLocation + @"\" + p.name + "_ID.jpeg"))//prevent duplicate names from overlapping files
+                {
+                    gen.Save(imageSaveLocation + @"\" + p.name + "_" + i.ToString() + "_ID.jpeg", ImageFormat.Jpeg);
+                }
+                else
+                {
+                    gen.Save(imageSaveLocation + @"\" + p.name + "_ID.jpeg", ImageFormat.Jpeg);
+                }
+                i++;
             });
-            //string[] parsedHtml =  parseHtml(htmlLocation);
             
-            //int skippedHeader = 0;
-
-            //foreach (string parse in parsedHtml)
-            //{
-            //    if (skippedHeader ==0)
-            //    {
-            //        skippedHeader++;
-            //    }
-            //    else
-            //    {
-            //        try
-            //        {
-            //            string[] splitParse = (parse.ToString()).Split('|');
-            //            Console.WriteLine("Generating" + splitParse[0]);
-            //            generateID(splitParse[0], splitParse[1]).Save(imageSaveLocation + @"\" + splitParse[0] + "_ID.jpeg", ImageFormat.Jpeg);
-            //        }
-            //        catch (Exception excep)
-            //        {
-            //            MessageBox.Show(excep.Message);
-            //            return;
-            //        }
-            //    }
-            //}
-
         }
 
         private String[] parseHtml(string filename)
@@ -181,17 +276,30 @@ namespace HvZmod
                 foreach (HtmlNode row in table.SelectNodes("tr"))
                 {
                     Console.WriteLine("row "+ rowNumb.ToString());
-                    
+                    int colNumb = 0;
                     foreach (HtmlNode cell in row.SelectNodes("th|td"))
                     {
+                        switch (colNumb)
+                        {
+                            case 4:
+								Console.WriteLine("cell: " + cell.InnerHtml);
+						        sb.Append(cell.InnerHtml);
+						        sb.Append("|");
+                                break;
+                            case 5:
+                                Console.WriteLine("cell: " + cell.InnerText);
+                                sb.Append(cell.InnerText);
+                                break;
 
-                        
-                        Console.WriteLine("cell: " + cell.InnerText);
+                            default:
+                                Console.WriteLine("cell: " + cell.InnerText);
+                                sb.Append(cell.InnerText);
+                                sb.Append("|");
+                                break;
 
-                        sb.Append(cell.InnerText);
-                        sb.Append("|");
+                        }
+                        colNumb++;
                     }
-                    sb.Remove((sb.Length - 1), 1);
                     procTable[rowNumb] = sb.ToString();
                     sb.Remove(0, sb.Length);
                     rowNumb++;
@@ -215,6 +323,7 @@ namespace HvZmod
                 int firstLine = 0;
                 string line;
                 string[] row;
+                int lineNumb = 0;
 
                 while ((line = file.ReadLine()) != null)
                 {
@@ -222,23 +331,39 @@ namespace HvZmod
                     else
                     {
                         row = line.Split(',');
-                        players.Add(new player(row[0], row[1], row[2]));
+                        players.Add(new player(row[0], row[1]));
+                        Console.WriteLine(lineNumb.ToString());
+                        lineNumb++;
                     }
                 }
+
+                absent = players;
+
+                absent.ForEach(delegate(player p)
+                {
+                    ListViewItem item = new ListViewItem(p.name);
+                    item.SubItems.Add(p.killid);
+
+                    listView_Attend_Absent.Items.Add(item);
+                });
 
             }
             catch (Exception excep)
             {
                 MessageBox.Show(excep.Message);
             }
+            file.Close();
 
         }
 
         private Image generateID(string name, string ID)
         {
+
+
             String encoding = name + "|" + ID;
 
             com.google.zxing.qrcode.QRCodeWriter qrCode = new com.google.zxing.qrcode.QRCodeWriter();
+            
             com.google.zxing.common.ByteMatrix byteIMG = qrCode.encode(encoding, com.google.zxing.BarcodeFormat.QR_CODE, 200, 200);
 
             sbyte[][] img = byteIMG.Array;
@@ -277,7 +402,8 @@ namespace HvZmod
 
             build.DrawImage(scaleByPercent(qrCodeBmp, 75), 95, -12);
 
-            toolStripStatusLabel1.Text = "Encoded";
+            Console.WriteLine(debugI.ToString());
+            debugI++;
 
             return genID;
         }
@@ -310,6 +436,141 @@ namespace HvZmod
 
             grPhoto.Dispose();
             return bmPhoto;
+        }
+
+        public void playerPresent(string name, string ID)
+        {
+            player find = new player(name, ID);
+            List<player> index = new List<player>();
+
+            if (absent.Exists(delegate(player p) { return ((p.name == name)&&(p.killid ==ID)); }))
+            {
+                ListView list = new ListView();
+                switch (tabControl1.SelectedIndex)
+                {
+                    case 2:
+                        index = present;
+                        list = listView_Attend_Absent;
+                        
+
+                        
+                        
+                        
+                        break;
+
+
+
+                    case 3:
+                        index = arbit;
+                        list = listView_List;
+                        break;
+
+
+                }
+                //add to either the Present or Arbitrary List
+                player add = new player(name, ID);
+                index.Add(add);
+
+                ListViewItem item = new ListViewItem(add.name);
+                item.SubItems.Add(add.killid);
+                list.Items.Add(item);
+
+
+                //remove from Absent List
+                if (tabControl1.SelectedIndex == 2)
+                {
+                    absent.RemoveAll((delegate(player p) { return p.name == name; }));
+
+                    ListViewItem i = listView_Attend_Absent.FindItemWithText(name, false, 0, false);
+                    listView_Attend_Absent.Items.Remove(i);
+
+                    textBox_Name_Attend.Text = "";
+                    textBox_Kill_Attend.Text = "";
+
+                    //update GUI
+                    toolStripStatusLabel1.Text = name + " Accounted for";
+
+                    label_Attend_Absent.Text = "Absent " + absent.Count.ToString();
+                    label_Attend_Present.Text = "Present " + present.Count.ToString();
+
+                    label_Name_Attend.Text = "Name: " + name;
+                    label_Kill_Attend.Text = "KillID: " + ID;
+                }
+                if (tabControl1.SelectedIndex == 3)
+                {
+                    toolStripStatusLabel1.Text = name + " Accounted for";
+
+                    label_List_List.Text = arbit.Count.ToString();
+
+                    label_Name_List.Text = "Name: " + name;
+                    label_Kill_List.Text = "KillID: " + ID;
+                }
+            }
+            else
+            {
+                toolStripStatusLabel1.Text = "SOMETHING IS WRONG WITH ID - ALREADY SCANNED?";
+            }
+        }
+
+        private void button_selectWebcam_Click(object sender, EventArgs e)
+        {
+            videoSource = new VideoCaptureDevice(videoCaptureDevices[comboBox_videoSource.SelectedIndex].MonikerString);
+
+            videoSource.NewFrame += new NewFrameEventHandler(videoSource_NewFrame);
+
+            videoSource.Start();
+
+            label_Attend_Picture.Text = label_Picture_List.Text = "Scan an ID";
+        }
+
+        void videoSource_NewFrame(object sender, NewFrameEventArgs eventArgs)
+        {
+            pictureBox_CreateList.Image = pictureBox_ScanAttend.Image = pictureBox_Setup.Image = (Bitmap)eventArgs.Frame.Clone();
+
+
+
+            this.Invoke((MethodInvoker)delegate//run on UI thread
+                {
+                    if (tabControl1.SelectedIndex >= 2)
+                    {
+                    decoder.RunWorkerAsync((Bitmap)eventArgs.Frame.Clone());
+                    }
+                });
+
+            //decoder.RunWorkerAsync((Bitmap)eventArgs.Frame.Clone());
+        }
+
+        private void button_Attend_Present_Click(object sender, EventArgs e)
+        {
+            playerPresent(textBox_Name_Attend.Text, textBox_Kill_Attend.Text);
+        }
+
+        private void button_Save_Attend_Click(object sender, EventArgs e)
+        {
+            string absentFile = "Absent " + DateTime.Now.ToString("MM-dd-yy hh.mm.ss") + ".csv";
+            string presentFile = "Present " + DateTime.Now.ToString("MM-dd-yy hh.mm.ss") + ".csv";
+            StreamWriter swAbsent = new StreamWriter(absentFile);
+            swAbsent.WriteLine("Name,KillID");
+            absent.ForEach(delegate(player p)
+            {
+                swAbsent.WriteLine(p.name + "," + p.killid);
+                Console.WriteLine(p.name + "," + p.killid);
+            });
+            swAbsent.Close();
+
+            StreamWriter swPresent = new StreamWriter(presentFile);
+            swPresent.WriteLine("Name,KillID");
+            present.ForEach(delegate(player p)
+            {
+                swPresent.WriteLine(p.name + "," + p.killid);
+                Console.WriteLine(p.name + "," + p.killid);
+            });
+            swPresent.Close();
+        }
+
+        private void button_List_Add_Click(object sender, EventArgs e)
+        {
+            playerPresent(textBox_Name_Add.Text, textBox_Kill_Add.Text);
         }
 
     }
