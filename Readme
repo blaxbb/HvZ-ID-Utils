@@ -1,9 +1,15 @@
-all code is liscensed under GPLv3
+This application was created by Brian Barrett.  All source code is liscensed GPLv3 and can be found at http://github.com/blaxbb/HvZ-ID-Utils
 
-TODO
+The ZXing library and the AForge library pack are open source and released under the Apache 2.0 and the LGPLv3 respectively.
 
--Write a real readme
--HvZ Mod util
--Webcam stability
+Humans vs Zombies and HvZ are registered trademarks of Gnarwhal Studios.
 
-Brian Barrett
+Setup instructions
+
+Navigate to the administration section and open the "Edit Players" page in a new tab or new window.
+
+Save the HTML of that page to a file.
+
+Use this HTML file as the "Master List" to finish setting up the program.
+
+After the HTML is loaded once, the program will load a database next time you run the app.

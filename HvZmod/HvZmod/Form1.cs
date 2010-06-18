@@ -34,6 +34,7 @@ namespace HvZmod
         List<player> absent = new List<player>();
         List<player> present = new List<player>();
         List<player> arbit= new List<player>();
+        List<player> arbitSource = new List<player>();
 
         int debugI= 1;
 
@@ -63,7 +64,8 @@ namespace HvZmod
             {
                 putCSV(new StreamReader("players.csv"));
                 enableControls();
-
+                label_HTML_loc.Text = "Player List loaded";
+                label_outLoc.Text = "Select Image Folder";
             }
 
             videoCaptureDevices = new FilterInfoCollection(FilterCategory.VideoInputDevice);
@@ -112,16 +114,8 @@ namespace HvZmod
 
                 this.Invoke((MethodInvoker)delegate//run on UI thread
                 {
-                    if (tabControl1.SelectedIndex == 2)
-                    {
                         playerPresent(items[0], items[1]);
-                    }
-                    if (tabControl1.SelectedIndex == 3)
-                    {
-                        
-                        label_Name_List.Text = "Name: " + items[0];
-                        label_Kill_List.Text = "Kill ID: " + items[1];
-                    }
+                    
                 });
             }
         }
@@ -142,6 +136,10 @@ namespace HvZmod
         private void enableControls()
         {
             button_outLocation.Enabled = true;
+            button_Attend_Present.Enabled = true;
+            button_List_Add.Enabled = true;
+            button_Save_Attend.Enabled = true;
+            button_List_Save.Enabled = true;
             
         }
 
@@ -211,7 +209,7 @@ namespace HvZmod
                         Console.WriteLine(p.name + "," + p.killid);
                     });
                     sw.Close();
-                    label_list.Text = htmlLocation;
+                    label_HTML_loc.Text = htmlLocation;
 
                     button_outLocation.Enabled = true;
                 }
@@ -231,13 +229,14 @@ namespace HvZmod
                 toolStripStatusLabel1.Text = "Folder Selected";
                 imageSaveLocation = folderBrowserDialog1.SelectedPath.ToString();
                 label_outLoc.Text = imageSaveLocation;
+                label_Save.Text = "Save images to folder";
                 button_save.Enabled = true;
             }
         }
         
         private void button_save_Click(object sender, EventArgs e)
         {
-            toolStripStatusLabel1.Text = "Processing";
+            
 
             int i = 1;
             players.ForEach(delegate(player p)
@@ -253,6 +252,8 @@ namespace HvZmod
                 }
                 i++;
             });
+
+            toolStripStatusLabel1.Text = "Generated images";
             
         }
 
@@ -337,7 +338,13 @@ namespace HvZmod
                     }
                 }
 
-                absent = players;
+                players.ForEach(delegate(player p)
+                {
+                    arbitSource.Add(p);
+                    absent.Add(p);
+                });
+
+                //arbitSource = absent = players;
 
                 absent.ForEach(delegate(player p)
                 {
@@ -441,75 +448,80 @@ namespace HvZmod
         public void playerPresent(string name, string ID)
         {
             player find = new player(name, ID);
-            List<player> index = new List<player>();
 
-            if (absent.Exists(delegate(player p) { return ((p.name == name)&&(p.killid ==ID)); }))
+            switch (tabControl1.SelectedIndex)
             {
-                ListView list = new ListView();
-                switch (tabControl1.SelectedIndex)
-                {
-                    case 2:
-                        index = present;
-                        list = listView_Attend_Absent;
-                        
+                case 2:
+                    if (absent.Exists(delegate(player p) { return ((p.name == name) && (p.killid == ID)); }))
+                    {
+
+                        //add to the Present List
+                        present.Add(find);
+
+                        ListViewItem item = new ListViewItem(find.name);
+                        item.SubItems.Add(find.killid);
+                        listView_Attend_Present.Items.Add(item);
+
+
+                        //remove from Absent List
+                        absent.RemoveAll((delegate(player p) { return p.killid == ID; }));
+
+                        ListViewItem i = listView_Attend_Absent.FindItemWithText(name, false, 0, false);
+                        listView_Attend_Absent.Items.Remove(i);
+
+                        textBox_Name_Attend.Text = "";
+                        textBox_Kill_Attend.Text = "";
+
+                        //update GUI
+                        toolStripStatusLabel1.Text = name + " Accounted for";
+
+                        label_Attend_Absent.Text = "Absent " + absent.Count.ToString();
+                        label_Attend_Present.Text = "Present " + present.Count.ToString();
+
+                        label_Name_Attend.Text = "Name: " + name;
+                        label_Kill_Attend.Text = "KillID: " + ID;
+                    }
+                    else
+                    {
+                        toolStripStatusLabel1.Text = "SOMETHING IS WRONG WITH ID - ALREADY SCANNED?";
+                    }
+                    break;
+
+                case 3:
+                    if (arbitSource.Exists(delegate(player p) { return ((p.name == name) && (p.killid == ID)); }))
+                    {
+
+                        //add to the Arbit List
+                        arbit.Add(find);
+
+                        ListViewItem item = new ListViewItem(find.name);
+                        item.SubItems.Add(find.killid);
+                        listView_List.Items.Add(item);
+
+                        //remove from arbit source
+                        arbitSource.RemoveAll((delegate(player p) { return p.killid == ID; }));
+
+                        //update GUI
+                        toolStripStatusLabel1.Text = name + " Accounted for";
+
+                        label_List_List.Text = "Players " + arbit.Count.ToString();
+                        //label_Attend_Absent.Text = "Absent " + absent.Count.ToString();
 
                         
-                        
-                        
-                        break;
+                        label_Name_List.Text = "Name: " + name;
+                        label_Kill_List.Text = "KillID: " + ID;
+                    }
+                    else
+                    {
+                        toolStripStatusLabel1.Text = "SOMETHING IS WRONG WITH ID - ALREADY SCANNED?";
+                    }
+                    break;
 
-
-
-                    case 3:
-                        index = arbit;
-                        list = listView_List;
-                        break;
-
-
-                }
-                //add to either the Present or Arbitrary List
-                player add = new player(name, ID);
-                index.Add(add);
-
-                ListViewItem item = new ListViewItem(add.name);
-                item.SubItems.Add(add.killid);
-                list.Items.Add(item);
-
-
-                //remove from Absent List
-                if (tabControl1.SelectedIndex == 2)
-                {
-                    absent.RemoveAll((delegate(player p) { return p.name == name; }));
-
-                    ListViewItem i = listView_Attend_Absent.FindItemWithText(name, false, 0, false);
-                    listView_Attend_Absent.Items.Remove(i);
-
-                    textBox_Name_Attend.Text = "";
-                    textBox_Kill_Attend.Text = "";
-
-                    //update GUI
-                    toolStripStatusLabel1.Text = name + " Accounted for";
-
-                    label_Attend_Absent.Text = "Absent " + absent.Count.ToString();
-                    label_Attend_Present.Text = "Present " + present.Count.ToString();
-
-                    label_Name_Attend.Text = "Name: " + name;
-                    label_Kill_Attend.Text = "KillID: " + ID;
-                }
-                if (tabControl1.SelectedIndex == 3)
-                {
-                    toolStripStatusLabel1.Text = name + " Accounted for";
-
-                    label_List_List.Text = arbit.Count.ToString();
-
-                    label_Name_List.Text = "Name: " + name;
-                    label_Kill_List.Text = "KillID: " + ID;
-                }
             }
-            else
-            {
-                toolStripStatusLabel1.Text = "SOMETHING IS WRONG WITH ID - ALREADY SCANNED?";
-            }
+
+
+            
+
         }
 
         private void button_selectWebcam_Click(object sender, EventArgs e)
@@ -571,6 +583,25 @@ namespace HvZmod
         private void button_List_Add_Click(object sender, EventArgs e)
         {
             playerPresent(textBox_Name_Add.Text, textBox_Kill_Add.Text);
+        }
+
+        private void button_List_Save_Click(object sender, EventArgs e)
+        {
+            saveFileDialog1.ShowDialog();
+            string arbitFile = saveFileDialog1.FileName;
+            StreamWriter swAbsent = new StreamWriter(arbitFile);
+            swAbsent.WriteLine("Name,KillID");
+            arbit.ForEach(delegate(player p)
+            {
+                swAbsent.WriteLine(p.name + "," + p.killid);
+                Console.WriteLine(p.name + "," + p.killid);
+            });
+            swAbsent.Close();
+        }
+
+        private void richTextBox2_LinkClicked(object sender, LinkClickedEventArgs e)
+        {
+            System.Diagnostics.Process.Start(e.LinkText);
         }
 
     }

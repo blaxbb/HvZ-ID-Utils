@@ -120,6 +120,24 @@
   <metadata name="statusStrip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>17, 17</value>
   </metadata>
+  <data name="richTextBox2.Text" xml:space="preserve">
+    <value>This application was created by Brian Barrett.  All source code is liscensed GPLv3 and can be found at http://github.com/blaxbb/HvZ-ID-Utils
+
+The ZXing library, the HTML Agility Pack, and the AForge library pack are open source and released under the Apache 2.0, the MS-PL, and the LGPLv3 respectively.
+
+Humans vs Zombies and HvZ are registered trademarks of Gnarwhal Studios.</value>
+  </data>
+  <data name="richTextBox1.Text" xml:space="preserve">
+    <value>Setup instructions
+
+Navigate to the administration section and open the "Edit Players" page in a new tab or new window.
+
+Save the HTML of that page to a file.
+
+Use this HTML file as the "Master List" to finish setting up the program.
+
+After the HTML is loaded once, the program will load a database next time you run the app.</value>
+  </data>
   <metadata name="openFileDialog1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>133, 17</value>
   </metadata>
