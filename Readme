@@ -1,6 +1,6 @@
 This application was created by Brian Barrett.  All source code is liscensed GPLv3 and can be found at http://github.com/blaxbb/HvZ-ID-Utils
 
-The ZXing library and the AForge library pack are open source and released under the Apache 2.0 and the LGPLv3 respectively.
+The ZXing library, HTML Agility Pack, and the AForge library pack are open source and released under the Apache 2.0, MS-PL, and the LGPLv3 respectively.
 
 Humans vs Zombies and HvZ are registered trademarks of Gnarwhal Studios.
 

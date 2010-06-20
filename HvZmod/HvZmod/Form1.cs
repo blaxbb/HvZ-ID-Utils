@@ -212,6 +212,8 @@ namespace HvZmod
                     label_HTML_loc.Text = htmlLocation;
 
                     button_outLocation.Enabled = true;
+
+                    enableControls();
                 }
                 catch (Exception excep)
                 {
@@ -483,7 +485,7 @@ namespace HvZmod
                     }
                     else
                     {
-                        toolStripStatusLabel1.Text = "SOMETHING IS WRONG WITH ID - ALREADY SCANNED?";
+                        toolStripStatusLabel1.Text = "SOMETHING IS WRONG WITH ID OR ALREADY SCANNED?";
                     }
                     break;
 
@@ -578,6 +580,8 @@ namespace HvZmod
                 Console.WriteLine(p.name + "," + p.killid);
             });
             swPresent.Close();
+
+            toolStripStatusLabel1.Text = "Lists saved";
         }
 
         private void button_List_Add_Click(object sender, EventArgs e)
@@ -597,6 +601,8 @@ namespace HvZmod
                 Console.WriteLine(p.name + "," + p.killid);
             });
             swAbsent.Close();
+
+            toolStripStatusLabel1.Text = "List saved";
         }
 
         private void richTextBox2_LinkClicked(object sender, LinkClickedEventArgs e)
