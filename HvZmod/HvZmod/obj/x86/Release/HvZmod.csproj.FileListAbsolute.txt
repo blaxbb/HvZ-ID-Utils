@@ -28,3 +28,21 @@ C:\Users\Brian Barrett\Documents\Visual Studio 2010\Projects\HvZ\HvZ-ID-Utils\Hv
 C:\Users\Brian Barrett\Documents\Visual Studio 2010\Projects\HvZ\HvZ-ID-Utils\HvZmod\HvZmod\obj\x86\Release\HvZmod.application
 C:\Users\Brian Barrett\Documents\Visual Studio 2010\Projects\HvZ\HvZ-ID-Utils\HvZmod\HvZmod\obj\x86\Release\HvZmod.exe
 C:\Users\Brian Barrett\Documents\Visual Studio 2010\Projects\HvZ\HvZ-ID-Utils\HvZmod\HvZmod\obj\x86\Release\HvZmod.pdb
+C:\Users\brian\Documents\GIT\HvZ-ID-Utils\HvZmod\HvZmod\obj\x86\Release\HvZmod.exe
+C:\Users\brian\Documents\GIT\HvZ-ID-Utils\HvZmod\HvZmod\obj\x86\Release\HvZmod.pdb
+C:\Users\brian\Documents\GIT\HvZ-ID-Utils\HvZmod\HvZmod\obj\x86\Release\ResolveAssemblyReference.cache
+C:\Users\brian\Documents\GIT\HvZ-ID-Utils\HvZmod\HvZmod\obj\x86\Release\HvZmod.Form1.resources
+C:\Users\brian\Documents\GIT\HvZ-ID-Utils\HvZmod\HvZmod\obj\x86\Release\HvZmod.Properties.Resources.resources
+C:\Users\brian\Documents\GIT\HvZ-ID-Utils\HvZmod\HvZmod\obj\x86\Release\ResGen.read.1.tlog
+C:\Users\brian\Documents\GIT\HvZ-ID-Utils\HvZmod\HvZmod\obj\x86\Release\ResGen.write.1.tlog
+C:\Users\brian\Documents\GIT\HvZ-ID-Utils\HvZmod\HvZmod\bin\Release\HvZmod.exe.manifest
+C:\Users\brian\Documents\GIT\HvZ-ID-Utils\HvZmod\HvZmod\bin\Release\HvZmod.application
+C:\Users\brian\Documents\GIT\HvZ-ID-Utils\HvZmod\HvZmod\bin\Release\HvZmod.exe
+C:\Users\brian\Documents\GIT\HvZ-ID-Utils\HvZmod\HvZmod\bin\Release\HvZmod.pdb
+C:\Users\brian\Documents\GIT\HvZ-ID-Utils\HvZmod\HvZmod\bin\Release\AForge.Video.DirectShow.dll
+C:\Users\brian\Documents\GIT\HvZ-ID-Utils\HvZmod\HvZmod\bin\Release\AForge.Video.dll
+C:\Users\brian\Documents\GIT\HvZ-ID-Utils\HvZmod\HvZmod\bin\Release\HtmlAgilityPack.dll
+C:\Users\brian\Documents\GIT\HvZ-ID-Utils\HvZmod\HvZmod\bin\Release\zxing.dll
+C:\Users\brian\Documents\GIT\HvZ-ID-Utils\HvZmod\HvZmod\obj\x86\Release\HvZmod.exe.manifest
+C:\Users\brian\Documents\GIT\HvZ-ID-Utils\HvZmod\HvZmod\obj\x86\Release\HvZmod.application
+C:\Users\brian\Documents\GIT\HvZ-ID-Utils\HvZmod\HvZmod\bin\Release\HvZmod.exe.config

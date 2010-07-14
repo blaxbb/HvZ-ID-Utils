@@ -132,7 +132,7 @@ Humans vs Zombies and HvZ are registered trademarks of Gnarwhal Studios.</value>
 
 Navigate to the administration section and open the "Edit Players" page in a new tab or new window.
 
-Save the HTML of that page to a file.
+Save the HTML of that page to a file. (typically aplayers.htm)
 
 Use this HTML file as the "Master List" to finish setting up the program.
 

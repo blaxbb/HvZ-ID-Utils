@@ -30,6 +30,7 @@
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
+            this.toolStripProgressBar1 = new System.Windows.Forms.ToolStripProgressBar();
             this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
@@ -46,6 +47,9 @@
             this.comboBox_videoSource = new System.Windows.Forms.ComboBox();
             this.button_selectWebcam = new System.Windows.Forms.Button();
             this.tabPage2 = new System.Windows.Forms.TabPage();
+            this.pictureBoxIndicator1 = new System.Windows.Forms.PictureBox();
+            this.label_Attend_Picture = new System.Windows.Forms.Label();
+            this.pictureBox_ScanAttend = new System.Windows.Forms.PictureBox();
             this.label_Attend_Absent = new System.Windows.Forms.Label();
             this.label_Attend_Present = new System.Windows.Forms.Label();
             this.button_Save_Attend = new System.Windows.Forms.Button();
@@ -61,11 +65,15 @@
             this.label_Kill_Attend = new System.Windows.Forms.Label();
             this.label_Name_Attend = new System.Windows.Forms.Label();
             this.tabPage3 = new System.Windows.Forms.TabPage();
+            this.pictureBoxIndicator2 = new System.Windows.Forms.PictureBox();
             this.label_Picture_List = new System.Windows.Forms.Label();
             this.button_List_Save = new System.Windows.Forms.Button();
             this.button_List_Add = new System.Windows.Forms.Button();
             this.textBox_Kill_Add = new System.Windows.Forms.TextBox();
             this.textBox_Name_Add = new System.Windows.Forms.TextBox();
+            this.listView_arbitSource = new System.Windows.Forms.ListView();
+            this.columnHeader5 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader6 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.listView_List = new System.Windows.Forms.ListView();
             this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader4 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -76,33 +84,42 @@
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
             this.folderBrowserDialog1 = new System.Windows.Forms.FolderBrowserDialog();
-            this.pictureBox_ScanAttend = new System.Windows.Forms.PictureBox();
-            this.label_Attend_Picture = new System.Windows.Forms.Label();
             this.statusStrip1.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.tabPage4.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_Setup)).BeginInit();
             this.tabPage2.SuspendLayout();
-            this.tabPage3.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox_CreateList)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxIndicator1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_ScanAttend)).BeginInit();
+            this.tabPage3.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxIndicator2)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox_CreateList)).BeginInit();
             this.SuspendLayout();
             // 
             // statusStrip1
             // 
             this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolStripProgressBar1,
             this.toolStripStatusLabel1});
+            this.statusStrip1.LayoutStyle = System.Windows.Forms.ToolStripLayoutStyle.Flow;
             this.statusStrip1.Location = new System.Drawing.Point(0, 448);
             this.statusStrip1.Name = "statusStrip1";
             this.statusStrip1.Size = new System.Drawing.Size(413, 22);
             this.statusStrip1.TabIndex = 0;
             this.statusStrip1.Text = "statusStrip1";
             // 
+            // toolStripProgressBar1
+            // 
+            this.toolStripProgressBar1.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+            this.toolStripProgressBar1.Name = "toolStripProgressBar1";
+            this.toolStripProgressBar1.Size = new System.Drawing.Size(100, 16);
+            this.toolStripProgressBar1.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
+            // 
             // toolStripStatusLabel1
             // 
             this.toolStripStatusLabel1.Name = "toolStripStatusLabel1";
-            this.toolStripStatusLabel1.Size = new System.Drawing.Size(118, 17);
+            this.toolStripStatusLabel1.Size = new System.Drawing.Size(118, 15);
             this.toolStripStatusLabel1.Text = "toolStripStatusLabel1";
             // 
             // tabControl1
@@ -253,6 +270,7 @@
             // 
             // tabPage2
             // 
+            this.tabPage2.Controls.Add(this.pictureBoxIndicator1);
             this.tabPage2.Controls.Add(this.label_Attend_Picture);
             this.tabPage2.Controls.Add(this.pictureBox_ScanAttend);
             this.tabPage2.Controls.Add(this.label_Attend_Absent);
@@ -272,6 +290,32 @@
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "Attendance";
             this.tabPage2.UseVisualStyleBackColor = true;
+            // 
+            // pictureBoxIndicator1
+            // 
+            this.pictureBoxIndicator1.Location = new System.Drawing.Point(188, 7);
+            this.pictureBoxIndicator1.Name = "pictureBoxIndicator1";
+            this.pictureBoxIndicator1.Size = new System.Drawing.Size(63, 92);
+            this.pictureBoxIndicator1.TabIndex = 15;
+            this.pictureBoxIndicator1.TabStop = false;
+            // 
+            // label_Attend_Picture
+            // 
+            this.label_Attend_Picture.AutoSize = true;
+            this.label_Attend_Picture.Location = new System.Drawing.Point(7, 106);
+            this.label_Attend_Picture.Name = "label_Attend_Picture";
+            this.label_Attend_Picture.Size = new System.Drawing.Size(13, 13);
+            this.label_Attend_Picture.TabIndex = 14;
+            this.label_Attend_Picture.Text = "_";
+            // 
+            // pictureBox_ScanAttend
+            // 
+            this.pictureBox_ScanAttend.Location = new System.Drawing.Point(6, 6);
+            this.pictureBox_ScanAttend.Name = "pictureBox_ScanAttend";
+            this.pictureBox_ScanAttend.Size = new System.Drawing.Size(175, 93);
+            this.pictureBox_ScanAttend.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.pictureBox_ScanAttend.TabIndex = 13;
+            this.pictureBox_ScanAttend.TabStop = false;
             // 
             // label_Attend_Absent
             // 
@@ -340,13 +384,16 @@
             this.listView_Attend_Absent.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.columnHeader1,
             this.columnHeader2});
+            this.listView_Attend_Absent.FullRowSelect = true;
             this.listView_Attend_Absent.Location = new System.Drawing.Point(201, 147);
             this.listView_Attend_Absent.Name = "listView_Attend_Absent";
             this.listView_Attend_Absent.Size = new System.Drawing.Size(196, 226);
+            this.listView_Attend_Absent.Sorting = System.Windows.Forms.SortOrder.Ascending;
             this.listView_Attend_Absent.TabIndex = 8;
             this.listView_Attend_Absent.TabStop = false;
             this.listView_Attend_Absent.UseCompatibleStateImageBehavior = false;
             this.listView_Attend_Absent.View = System.Windows.Forms.View.Details;
+            this.listView_Attend_Absent.ItemActivate += new System.EventHandler(this.listView_Add_ItemActivate);
             // 
             // columnHeader1
             // 
@@ -364,13 +411,16 @@
             this.listView_Attend_Present.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.columnHeader_Name,
             this.columnHeader_ID});
+            this.listView_Attend_Present.FullRowSelect = true;
             this.listView_Attend_Present.Location = new System.Drawing.Point(6, 147);
             this.listView_Attend_Present.Name = "listView_Attend_Present";
             this.listView_Attend_Present.Size = new System.Drawing.Size(192, 226);
+            this.listView_Attend_Present.Sorting = System.Windows.Forms.SortOrder.Ascending;
             this.listView_Attend_Present.TabIndex = 8;
             this.listView_Attend_Present.TabStop = false;
             this.listView_Attend_Present.UseCompatibleStateImageBehavior = false;
             this.listView_Attend_Present.View = System.Windows.Forms.View.Details;
+            this.listView_Attend_Present.ItemActivate += new System.EventHandler(this.listView_removePlayer);
             // 
             // columnHeader_Name
             // 
@@ -404,11 +454,13 @@
             // 
             // tabPage3
             // 
+            this.tabPage3.Controls.Add(this.pictureBoxIndicator2);
             this.tabPage3.Controls.Add(this.label_Picture_List);
             this.tabPage3.Controls.Add(this.button_List_Save);
             this.tabPage3.Controls.Add(this.button_List_Add);
             this.tabPage3.Controls.Add(this.textBox_Kill_Add);
             this.tabPage3.Controls.Add(this.textBox_Name_Add);
+            this.tabPage3.Controls.Add(this.listView_arbitSource);
             this.tabPage3.Controls.Add(this.listView_List);
             this.tabPage3.Controls.Add(this.label_List_List);
             this.tabPage3.Controls.Add(this.label_Kill_List);
@@ -416,10 +468,18 @@
             this.tabPage3.Controls.Add(this.pictureBox_CreateList);
             this.tabPage3.Location = new System.Drawing.Point(4, 22);
             this.tabPage3.Name = "tabPage3";
-            this.tabPage3.Size = new System.Drawing.Size(408, 422);
+            this.tabPage3.Size = new System.Drawing.Size(405, 422);
             this.tabPage3.TabIndex = 2;
             this.tabPage3.Text = "Create List";
             this.tabPage3.UseVisualStyleBackColor = true;
+            // 
+            // pictureBoxIndicator2
+            // 
+            this.pictureBoxIndicator2.Location = new System.Drawing.Point(194, 6);
+            this.pictureBoxIndicator2.Name = "pictureBoxIndicator2";
+            this.pictureBoxIndicator2.Size = new System.Drawing.Size(63, 92);
+            this.pictureBoxIndicator2.TabIndex = 16;
+            this.pictureBoxIndicator2.TabStop = false;
             // 
             // label_Picture_List
             // 
@@ -471,19 +531,49 @@
             this.textBox_Name_Add.Size = new System.Drawing.Size(137, 20);
             this.textBox_Name_Add.TabIndex = 2;
             // 
+            // listView_arbitSource
+            // 
+            this.listView_arbitSource.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.listView_arbitSource.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.columnHeader5,
+            this.columnHeader6});
+            this.listView_arbitSource.FullRowSelect = true;
+            this.listView_arbitSource.Location = new System.Drawing.Point(202, 142);
+            this.listView_arbitSource.Name = "listView_arbitSource";
+            this.listView_arbitSource.Size = new System.Drawing.Size(195, 234);
+            this.listView_arbitSource.Sorting = System.Windows.Forms.SortOrder.Ascending;
+            this.listView_arbitSource.TabIndex = 11;
+            this.listView_arbitSource.TabStop = false;
+            this.listView_arbitSource.UseCompatibleStateImageBehavior = false;
+            this.listView_arbitSource.View = System.Windows.Forms.View.Details;
+            this.listView_arbitSource.ItemActivate += new System.EventHandler(this.listView_Add_ItemActivate);
+            // 
+            // columnHeader5
+            // 
+            this.columnHeader5.Text = "Name";
+            this.columnHeader5.Width = 123;
+            // 
+            // columnHeader6
+            // 
+            this.columnHeader6.Text = "Kill ID";
+            this.columnHeader6.Width = 68;
+            // 
             // listView_List
             // 
             this.listView_List.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.listView_List.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.columnHeader3,
             this.columnHeader4});
-            this.listView_List.Location = new System.Drawing.Point(105, 142);
+            this.listView_List.FullRowSelect = true;
+            this.listView_List.Location = new System.Drawing.Point(6, 142);
             this.listView_List.Name = "listView_List";
-            this.listView_List.Size = new System.Drawing.Size(195, 263);
+            this.listView_List.Size = new System.Drawing.Size(195, 234);
+            this.listView_List.Sorting = System.Windows.Forms.SortOrder.Ascending;
             this.listView_List.TabIndex = 11;
             this.listView_List.TabStop = false;
             this.listView_List.UseCompatibleStateImageBehavior = false;
             this.listView_List.View = System.Windows.Forms.View.Details;
+            this.listView_List.ItemActivate += new System.EventHandler(this.listView_removePlayer);
             // 
             // columnHeader3
             // 
@@ -499,7 +589,7 @@
             // 
             this.label_List_List.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.label_List_List.AutoSize = true;
-            this.label_List_List.Location = new System.Drawing.Point(121, 126);
+            this.label_List_List.Location = new System.Drawing.Point(3, 123);
             this.label_List_List.Name = "label_List_List";
             this.label_List_List.Size = new System.Drawing.Size(41, 13);
             this.label_List_List.TabIndex = 10;
@@ -529,7 +619,7 @@
             // 
             this.pictureBox_CreateList.Location = new System.Drawing.Point(6, 6);
             this.pictureBox_CreateList.Name = "pictureBox_CreateList";
-            this.pictureBox_CreateList.Size = new System.Drawing.Size(152, 92);
+            this.pictureBox_CreateList.Size = new System.Drawing.Size(182, 92);
             this.pictureBox_CreateList.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.pictureBox_CreateList.TabIndex = 8;
             this.pictureBox_CreateList.TabStop = false;
@@ -539,24 +629,6 @@
             this.saveFileDialog1.DefaultExt = "csv";
             this.saveFileDialog1.FileName = "list.csv";
             this.saveFileDialog1.Title = "Export List";
-            // 
-            // pictureBox_ScanAttend
-            // 
-            this.pictureBox_ScanAttend.Location = new System.Drawing.Point(6, 6);
-            this.pictureBox_ScanAttend.Name = "pictureBox_ScanAttend";
-            this.pictureBox_ScanAttend.Size = new System.Drawing.Size(175, 93);
-            this.pictureBox_ScanAttend.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
-            this.pictureBox_ScanAttend.TabIndex = 13;
-            this.pictureBox_ScanAttend.TabStop = false;
-            // 
-            // label_Attend_Picture
-            // 
-            this.label_Attend_Picture.AutoSize = true;
-            this.label_Attend_Picture.Location = new System.Drawing.Point(7, 106);
-            this.label_Attend_Picture.Name = "label_Attend_Picture";
-            this.label_Attend_Picture.Size = new System.Drawing.Size(13, 13);
-            this.label_Attend_Picture.TabIndex = 14;
-            this.label_Attend_Picture.Text = "_";
             // 
             // Form1
             // 
@@ -579,10 +651,12 @@
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_Setup)).EndInit();
             this.tabPage2.ResumeLayout(false);
             this.tabPage2.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxIndicator1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox_ScanAttend)).EndInit();
             this.tabPage3.ResumeLayout(false);
             this.tabPage3.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxIndicator2)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_CreateList)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox_ScanAttend)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -639,6 +713,12 @@
         private System.Windows.Forms.RichTextBox richTextBox2;
         private System.Windows.Forms.Label label_Attend_Picture;
         private System.Windows.Forms.PictureBox pictureBox_ScanAttend;
+        private System.Windows.Forms.ToolStripProgressBar toolStripProgressBar1;
+        private System.Windows.Forms.PictureBox pictureBoxIndicator1;
+        private System.Windows.Forms.PictureBox pictureBoxIndicator2;
+        private System.Windows.Forms.ListView listView_arbitSource;
+        private System.Windows.Forms.ColumnHeader columnHeader5;
+        private System.Windows.Forms.ColumnHeader columnHeader6;
     }
 }
 

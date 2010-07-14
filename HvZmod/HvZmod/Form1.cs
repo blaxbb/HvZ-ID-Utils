@@ -16,6 +16,7 @@ using HtmlAgilityPack;
 using System.Reflection;
 using System.IO;
 using com.google.zxing.common;
+using System.Media;
 
 
 namespace HvZmod
@@ -29,6 +30,9 @@ namespace HvZmod
         private VideoCaptureDevice videoSource;
 
         static BackgroundWorker decoder = new BackgroundWorker();
+        static BackgroundWorker htmlParser = new BackgroundWorker();
+        static BackgroundWorker idGenerator = new BackgroundWorker();
+        
 
         List<player> players = new List<player>();
         List<player> absent = new List<player>();
@@ -58,7 +62,15 @@ namespace HvZmod
         private void Form1_Load(object sender, EventArgs e)
         {
             Application.ApplicationExit += new EventHandler(Application_ApplicationExit);
+
             decoder.DoWork += new DoWorkEventHandler(decoder_DoWork);
+
+            htmlParser.DoWork += new DoWorkEventHandler(htmlParser_DoWork);
+            htmlParser.WorkerReportsProgress = true;
+            htmlParser.ProgressChanged += new ProgressChangedEventHandler(htmlParser_ProgressChanged);
+            htmlParser.RunWorkerCompleted += new RunWorkerCompletedEventHandler(htmlParser_RunWorkerCompleted);
+
+            idGenerator.DoWork += new DoWorkEventHandler(idGenerator_DoWork);
 
             if (File.Exists("players.csv"))
             {
@@ -80,14 +92,178 @@ namespace HvZmod
             toolStripStatusLabel1.Text = "";
         }
 
+        void idGenerator_DoWork(object sender, DoWorkEventArgs e)
+        {
+            int i = 1;
+            players.ForEach(delegate(player p)
+            {
+                Image gen = generateID(p.name, p.killid);
+                if (File.Exists(imageSaveLocation + @"\" + p.name + "_ID.jpeg"))//prevent duplicate names from overlapping files
+                {
+                    gen.Save(imageSaveLocation + @"\" + p.name + "_" + i.ToString() + "_ID.jpeg", ImageFormat.Jpeg);
+                }
+                else
+                {
+                    gen.Save(imageSaveLocation + @"\" + p.name + "_ID.jpeg", ImageFormat.Jpeg);
+                }
+                i++;
+            });
+
+            toolStripStatusLabel1.Text = "Generated images";
+        }
+
+        void htmlParser_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            String[] parsedHtml =(String[]) e.Result;
+
+            int skippedHeader = 0;
+
+            foreach (string parse in parsedHtml)
+            {
+                if (skippedHeader == 0)
+                {
+                    skippedHeader++;
+                }
+                else
+                {
+                    try
+                    {
+                        string[] splitParse = (parse.ToString()).Split('|');
+
+                        //[4] = "<a href='admin/edit_player.php?id=GWKPIL'>edit</a>"
+
+                        string ID = splitParse[4].ToString().Remove(0, 34);
+
+
+                        //string[] idURL = splitParse[4].ToString().Split('=');
+                        players.Add(new player(splitParse[0], ID.Remove(6, 10)));
+                    }
+                    catch (Exception excep)
+                    {
+                        break;
+                    }
+
+
+
+                }
+
+            }
+
+            absent = players;
+
+            absent.ForEach(delegate(player p)
+            {
+                ListViewItem item = new ListViewItem(p.name);
+                item.SubItems.Add(p.killid);
+                listView_Attend_Absent.Items.Add(item);
+            });
+
+
+            try
+            {
+                StreamWriter sw = new StreamWriter("players.csv");
+                sw.WriteLine("Name,KillID");
+                players.ForEach(delegate(player p)
+                {
+                    sw.WriteLine(p.name + "," + p.killid);
+                    Console.WriteLine(p.name + "," + p.killid);
+                });
+                sw.Close();
+                label_HTML_loc.Text = htmlLocation;
+
+                button_outLocation.Enabled = true;
+
+                enableControls();
+            }
+            catch (Exception excep)
+            {
+                MessageBox.Show(excep.Message);
+            }
+        }
+
+        void htmlParser_ProgressChanged(object sender, ProgressChangedEventArgs e)
+        {
+            toolStripProgressBar1.Value = e.ProgressPercentage;
+         
+        }
+
+        void htmlParser_DoWork(object sender, DoWorkEventArgs e)
+        {
+
+            {
+
+                string filename = (string)e.Argument;
+
+                HtmlAgilityPack.HtmlDocument doc = new HtmlAgilityPack.HtmlDocument();
+
+                doc.Load(filename);
+
+                String[] procTable = new string[5000];
+                int rowNumb = 0;
+
+                StringBuilder sb = new StringBuilder();
+
+
+                foreach (HtmlNode table in doc.DocumentNode.SelectNodes("//table"))
+                {
+                    Console.WriteLine("Found: " + table.Id);
+                    int numbPlayers = table.SelectNodes("tr").Count;
+                    foreach (HtmlNode row in table.SelectNodes("tr"))
+                    {
+                        Console.WriteLine("row " + rowNumb.ToString());
+                        int colNumb = 0;
+                        foreach (HtmlNode cell in row.SelectNodes("th|td"))
+                        {
+                            int rowIndex=1;
+                            htmlParser.ReportProgress(rowIndex/numbPlayers);
+                            rowIndex++;
+                            switch (colNumb)
+                            {
+                                case 4:
+                                    Console.WriteLine("cell: " + cell.InnerHtml);
+                                    sb.Append(cell.InnerHtml);
+                                    sb.Append("|");
+                                    break;
+                                case 5:
+                                    Console.WriteLine("cell: " + cell.InnerText);
+                                    sb.Append(cell.InnerText);
+                                    break;
+
+                                default:
+                                    Console.WriteLine("cell: " + cell.InnerText);
+                                    sb.Append(cell.InnerText);
+                                    sb.Append("|");
+                                    break;
+
+                            }
+                            colNumb++;
+                        }
+                        procTable[rowNumb] = sb.ToString();
+                        sb.Remove(0, sb.Length);
+                        rowNumb++;
+                    }
+                }
+                e.Result = procTable;
+                
+            }
+        }
+
         void decoder_DoWork(object sender, DoWorkEventArgs e)
         {
             Bitmap bmp = (Bitmap)e.Argument;
             
             QRCodeReader reader = new QRCodeReader();
-            RGBLuminanceSource source = new RGBLuminanceSource(bmp, bmp.Width, bmp.Height);
+            RGBLuminanceSource source;
+            BinaryBitmap binDecode;
+            try
+            {
 
-            BinaryBitmap binDecode = new BinaryBitmap(new HybridBinarizer(source));
+                source = new RGBLuminanceSource(bmp, bmp.Width, bmp.Height);
+                binDecode = new BinaryBitmap(new HybridBinarizer(source));
+            }
+            catch (Exception excep)
+            { binDecode = null; }
+
 
             String decodedString = "";
             Result result;
@@ -98,7 +274,7 @@ namespace HvZmod
                 decodedString = result.Text;
             }
 
-            catch (ReaderException)
+            catch (Exception)
             {
                 decodedString = "";
             }
@@ -112,9 +288,12 @@ namespace HvZmod
             {
                 String[] items = (decodedString).Split('|');
 
+
+
                 this.Invoke((MethodInvoker)delegate//run on UI thread
                 {
-                        playerPresent(items[0], items[1]);
+                    
+                    playerPresent(items[0], items[1]);
                     
                 });
             }
@@ -140,6 +319,10 @@ namespace HvZmod
             button_List_Add.Enabled = true;
             button_Save_Attend.Enabled = true;
             button_List_Save.Enabled = true;
+
+            label_Attend_Absent.Text = "Absent " + absent.Count.ToString();
+            label_Attend_Present.Text = "Present " + present.Count.ToString();
+            label_List_List.Text = "Players " + arbit.Count.ToString();
             
         }
 
@@ -152,74 +335,8 @@ namespace HvZmod
             {
                 toolStripStatusLabel1.Text = "HTML Loaded";
                 htmlLocation = openFileDialog1.FileName.ToString();
-                
-                
-                string[] parsedHtml = parseHtml(htmlLocation);
 
-                int skippedHeader = 0;
-
-                foreach (string parse in parsedHtml)
-                {
-                    if (skippedHeader == 0)
-                    {
-                        skippedHeader++;
-                    }
-                    else
-                    {
-                        try
-                        {
-                            string[] splitParse = (parse.ToString()).Split('|');
-
-                            //[4] = "<a href='admin/edit_player.php?id=GWKPIL'>edit</a>"
-
-                            string ID = splitParse[4].ToString().Remove(0, 34);
-                            
-
-                            //string[] idURL = splitParse[4].ToString().Split('=');
-                            players.Add(new player(splitParse[0], ID.Remove(6, 10)));                         
-                        }
-                        catch (Exception excep)
-                        {
-                            break;
-                        }
-
-
-
-                    }
-                    
-                }
-
-                absent = players;
-
-                absent.ForEach(delegate(player p)
-                {
-                    ListViewItem item = new ListViewItem(p.name);
-                    item.SubItems.Add(p.killid);
-                    listView_Attend_Absent.Items.Add(item);
-                });
-
-
-                try
-                {
-                    StreamWriter sw = new StreamWriter("players.csv");
-                    sw.WriteLine("Name,KillID");
-                    players.ForEach(delegate(player p)
-                    {
-                        sw.WriteLine(p.name + "," + p.killid);
-                        Console.WriteLine(p.name + "," + p.killid);
-                    });
-                    sw.Close();
-                    label_HTML_loc.Text = htmlLocation;
-
-                    button_outLocation.Enabled = true;
-
-                    enableControls();
-                }
-                catch (Exception excep)
-                {
-                    MessageBox.Show(excep.Message);
-                }
-
+                htmlParser.RunWorkerAsync(htmlLocation);
             }
         }
 
@@ -238,78 +355,9 @@ namespace HvZmod
         
         private void button_save_Click(object sender, EventArgs e)
         {
+
+            idGenerator.RunWorkerAsync();
             
-
-            int i = 1;
-            players.ForEach(delegate(player p)
-            {
-                Image gen = generateID(p.name, p.killid);
-                if (File.Exists(imageSaveLocation + @"\" + p.name + "_ID.jpeg"))//prevent duplicate names from overlapping files
-                {
-                    gen.Save(imageSaveLocation + @"\" + p.name + "_" + i.ToString() + "_ID.jpeg", ImageFormat.Jpeg);
-                }
-                else
-                {
-                    gen.Save(imageSaveLocation + @"\" + p.name + "_ID.jpeg", ImageFormat.Jpeg);
-                }
-                i++;
-            });
-
-            toolStripStatusLabel1.Text = "Generated images";
-            
-        }
-
-        private String[] parseHtml(string filename)
-        {
-            
-            
-            HtmlAgilityPack.HtmlDocument doc = new HtmlAgilityPack.HtmlDocument();
-            
-            doc.Load(filename);
-
-            String[] procTable = new string[5000];
-            int rowNumb = 0;
-
-            StringBuilder sb = new StringBuilder();           
-            
-
-            foreach (HtmlNode table in doc.DocumentNode.SelectNodes("//table"))
-            {
-                Console.WriteLine("Found: " + table.Id);
-                foreach (HtmlNode row in table.SelectNodes("tr"))
-                {
-                    Console.WriteLine("row "+ rowNumb.ToString());
-                    int colNumb = 0;
-                    foreach (HtmlNode cell in row.SelectNodes("th|td"))
-                    {
-                        switch (colNumb)
-                        {
-                            case 4:
-								Console.WriteLine("cell: " + cell.InnerHtml);
-						        sb.Append(cell.InnerHtml);
-						        sb.Append("|");
-                                break;
-                            case 5:
-                                Console.WriteLine("cell: " + cell.InnerText);
-                                sb.Append(cell.InnerText);
-                                break;
-
-                            default:
-                                Console.WriteLine("cell: " + cell.InnerText);
-                                sb.Append(cell.InnerText);
-                                sb.Append("|");
-                                break;
-
-                        }
-                        colNumb++;
-                    }
-                    procTable[rowNumb] = sb.ToString();
-                    sb.Remove(0, sb.Length);
-                    rowNumb++;
-                }
-            }
-
-            return procTable;
         }
 
         public static string getCSV<T>(List<string> list)
@@ -354,6 +402,7 @@ namespace HvZmod
                     item.SubItems.Add(p.killid);
 
                     listView_Attend_Absent.Items.Add(item);
+                    listView_arbitSource.Items.Add((ListViewItem)item.Clone());
                 });
 
             }
@@ -456,6 +505,15 @@ namespace HvZmod
                 case 2:
                     if (absent.Exists(delegate(player p) { return ((p.name == name) && (p.killid == ID)); }))
                     {
+                        try
+                        {
+                            SoundPlayer simpleSound = new SoundPlayer(@"c:\Windows\Media\Windows Logon Sound.wav");
+                            simpleSound.Play();
+                        }
+                        catch (Exception excep)
+                        { }
+
+                        pictureBoxIndicator1.BackColor = Color.Green;
 
                         //add to the Present List
                         present.Add(find);
@@ -483,15 +541,64 @@ namespace HvZmod
                         label_Name_Attend.Text = "Name: " + name;
                         label_Kill_Attend.Text = "KillID: " + ID;
                     }
+                    else if (absent.Exists(delegate(player p) { return (p.name == name); }))
+                    {
+                        try
+                        {
+                            SoundPlayer simpleSound = new SoundPlayer(@"c:\Windows\Media\Windows Critical Stop.wav");
+                            simpleSound.Play();
+                        }
+                        catch (Exception excep)
+                        { }
+
+                        pictureBoxIndicator1.BackColor = Color.Red;
+
+                        toolStripStatusLabel1.Text = "KILL ID INVALID";
+                    }
+                    else if (absent.Exists(delegate(player p) { return (p.killid == ID); }))
+                    {
+                        try
+                        {
+                            SoundPlayer simpleSound = new SoundPlayer(@"c:\Windows\Media\Windows Critical Stop.wav");
+                            simpleSound.Play();
+                        }
+                        catch (Exception excep)
+                        { }
+
+                        pictureBoxIndicator1.BackColor = Color.Red;
+
+                        toolStripStatusLabel1.Text = "NAME INVALID";
+                    }
                     else
                     {
-                        toolStripStatusLabel1.Text = "SOMETHING IS WRONG WITH ID OR ALREADY SCANNED?";
+                        try
+                        {
+                            SoundPlayer simpleSound = new SoundPlayer(@"c:\Windows\Media\Windows Critical Stop.wav");
+                            simpleSound.Play();
+                        }
+                        catch (Exception excep)
+                        { }
+
+                        pictureBoxIndicator1.BackColor = Color.Red;
+
+                        toolStripStatusLabel1.Text = "ID ERROR - ALREADY SCANNED?";
                     }
                     break;
 
                 case 3:
                     if (arbitSource.Exists(delegate(player p) { return ((p.name == name) && (p.killid == ID)); }))
                     {
+
+                        try
+                        {
+                            SoundPlayer simpleSound = new SoundPlayer(@"c:\Windows\Media\Windows Logon Sound.wav");
+                            
+                            simpleSound.Play();
+                        }
+                        catch (Exception excep)
+                        { }
+
+                        pictureBoxIndicator2.BackColor = Color.Green;
 
                         //add to the Arbit List
                         arbit.Add(find);
@@ -503,6 +610,10 @@ namespace HvZmod
                         //remove from arbit source
                         arbitSource.RemoveAll((delegate(player p) { return p.killid == ID; }));
 
+                        ListViewItem i = listView_arbitSource.FindItemWithText(name, false, 0, false);
+                        listView_arbitSource.Items.Remove(i);
+
+
                         //update GUI
                         toolStripStatusLabel1.Text = name + " Accounted for";
 
@@ -513,9 +624,47 @@ namespace HvZmod
                         label_Name_List.Text = "Name: " + name;
                         label_Kill_List.Text = "KillID: " + ID;
                     }
+                    else if (arbitSource.Exists(delegate(player p) { return (p.name == name); }))
+                    {
+                        try
+                        {
+                            SoundPlayer simpleSound = new SoundPlayer(@"c:\Windows\Media\Windows Critical Stop.wav");
+                            simpleSound.Play();
+                        }
+                        catch (Exception excep)
+                        { }
+
+                        pictureBoxIndicator2.BackColor = Color.Red;
+
+                        toolStripStatusLabel1.Text = "KILL ID INVALID";
+                    }
+                    else if (arbitSource.Exists(delegate(player p) { return (p.killid == ID); }))
+                    {
+                        try
+                        {
+                            SoundPlayer simpleSound = new SoundPlayer(@"c:\Windows\Media\Windows Critical Stop.wav");
+                            simpleSound.Play();
+                        }
+                        catch (Exception excep)
+                        { }
+
+                        pictureBoxIndicator2.BackColor = Color.Red;
+
+                        toolStripStatusLabel1.Text = "NAME INVALID";
+                    }
                     else
                     {
-                        toolStripStatusLabel1.Text = "SOMETHING IS WRONG WITH ID - ALREADY SCANNED?";
+                        try
+                        {
+                            SoundPlayer simpleSound = new SoundPlayer(@"c:\Windows\Media\Windows Critical Stop.wav");
+                            simpleSound.Play();
+                        }
+                        catch (Exception excep)
+                        { }
+
+                        pictureBoxIndicator2.BackColor = Color.Red;
+
+                        toolStripStatusLabel1.Text = "ID ERROR - ALREADY SCANNED?";
                     }
                     break;
 
@@ -542,14 +691,25 @@ namespace HvZmod
             pictureBox_CreateList.Image = pictureBox_ScanAttend.Image = pictureBox_Setup.Image = (Bitmap)eventArgs.Frame.Clone();
 
 
-
-            this.Invoke((MethodInvoker)delegate//run on UI thread
-                {
-                    if (tabControl1.SelectedIndex >= 2)
+            try
+            {
+                this.Invoke((MethodInvoker)delegate//run on UI thread
                     {
-                    decoder.RunWorkerAsync((Bitmap)eventArgs.Frame.Clone());
-                    }
-                });
+                        if (tabControl1.SelectedIndex >= 2)
+                        {
+                            try
+                            {
+                                decoder.RunWorkerAsync((Bitmap)eventArgs.Frame.Clone());
+                            }
+                            catch (Exception excep)
+                            {
+
+                            }
+                        }
+                    });
+            }
+            catch(Exception)
+            {}
 
             //decoder.RunWorkerAsync((Bitmap)eventArgs.Frame.Clone());
         }
@@ -610,5 +770,70 @@ namespace HvZmod
             System.Diagnostics.Process.Start(e.LinkText);
         }
 
+        private void listView_Add_ItemActivate(object sender, EventArgs e)
+        {
+            switch (tabControl1.SelectedIndex)
+            {
+                case 2:
+
+                    foreach (ListViewItem item in listView_Attend_Absent.SelectedItems)
+                    {
+                        string name = item.SubItems[0].Text;
+                        string killID = item.SubItems[1].Text;
+                        playerPresent(name,killID);
+                    }
+                    break;
+
+                case 3:
+                    foreach (ListViewItem item in listView_arbitSource.SelectedItems)
+                    {
+                        
+                        string name = item.SubItems[0].Text;
+                        string killID = item.SubItems[1].Text;
+                        playerPresent(name, killID);
+                    }
+                    break;
+            }
+        }
+
+        private void listView_removePlayer(object sender, EventArgs e)
+        {
+            player find;
+            switch (tabControl1.SelectedIndex)
+            {
+                case 2:
+
+                    foreach (ListViewItem item in listView_Attend_Present.SelectedItems)
+                    {
+                        string name = item.SubItems[0].Text;
+                        string killID = item.SubItems[1].Text;
+
+                        find = new player(name, killID);
+
+                        present.RemoveAll((delegate(player p) { return p.killid == killID; }));
+                        absent.Add(find);
+
+                        listView_Attend_Present.Items.Remove(item);
+                        listView_Attend_Absent.Items.Add(item);
+                    }
+                    break;
+
+                case 3:
+                    foreach (ListViewItem item in listView_List.SelectedItems)
+                    {
+                        string name = item.SubItems[0].Text;
+                        string killID = item.SubItems[1].Text;
+
+                        find = new player(name, killID);
+
+                        arbit.RemoveAll((delegate(player p) { return p.killid == killID; }));
+                        arbitSource.Add(find);
+
+                        listView_List.Items.Remove(item);
+                        listView_arbitSource.Items.Add(item);
+                    }
+                    break;
+            }
+        }
     }
 }
