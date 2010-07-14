@@ -151,6 +151,11 @@ namespace HvZmod
 
             absent= arbitSource = players;
 
+            listView_Attend_Absent.Items.Clear();
+            listView_Attend_Present.Items.Clear();
+            listView_List.Items.Clear();
+            listView_arbitSource.Items.Clear();
+
             absent.ForEach(delegate(player p)
             {
                 ListViewItem item = new ListViewItem(p.name);
