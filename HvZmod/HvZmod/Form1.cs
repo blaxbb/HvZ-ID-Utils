@@ -149,13 +149,14 @@ namespace HvZmod
 
             }
 
-            absent = players;
+            absent= arbitSource = players;
 
             absent.ForEach(delegate(player p)
             {
                 ListViewItem item = new ListViewItem(p.name);
                 item.SubItems.Add(p.killid);
                 listView_Attend_Absent.Items.Add(item);
+                listView_arbitSource.Items.Add((ListViewItem)item.Clone());
             });
 
 
